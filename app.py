@@ -201,25 +201,49 @@ with col_main:
         
         # 1. Search
         with st.status("Accessing Global Indices...", expanded=False) as status:
-            search_agent = build_search_agent()
-            sr = search_agent.invoke({"messages": [("user", f"Deep search: {topic}")]})
-            curr_results["search"] = sr["messages"][-1].content
-            st.session_state.results = dict(curr_results)
-            status.update(label="Discovery Complete", state="complete")
+            try:
+                search_agent = build_search_agent()
+                sr = search_agent.invoke({"messages": [("user", f"Deep search: {topic}")]})
+                curr_results["search"] = sr["messages"][-1].content
+                st.session_state.results = dict(curr_results)
+                status.update(label="Discovery Complete", state="complete")
+            except Exception as e:
+                status.update(label="Search Failed", state="error")
+                st.error(f"Search Agent encountered an error: {str(e)}")
+                st.session_state.running = False
+                st.stop()
+        
+        time.sleep(4) # Delay for Free Tier Rate Limits
         
         # 2. Reader
         with st.status("Analyzing Source Authority...", expanded=False) as status:
-            reader_agent = build_reader_agent()
-            rr = reader_agent.invoke({"messages": [("user", f"Extract core technical data for {topic} from: {curr_results['search'][:1000]}")]})
-            curr_results["reader"] = rr["messages"][-1].content
-            st.session_state.results = dict(curr_results)
-            status.update(label="Extraction Complete", state="complete")
+            try:
+                reader_agent = build_reader_agent()
+                rr = reader_agent.invoke({"messages": [("user", f"Extract core technical data for {topic} from: {curr_results['search'][:1000]}")]})
+                curr_results["reader"] = rr["messages"][-1].content
+                st.session_state.results = dict(curr_results)
+                status.update(label="Extraction Complete", state="complete")
+            except Exception as e:
+                status.update(label="Extraction Failed", state="error")
+                st.error(f"Reader Agent encountered an error: {str(e)}")
+                st.session_state.running = False
+                st.stop()
+
+        time.sleep(4) # Delay for Free Tier Rate Limits
 
         # 3. Writer
         with st.status("Synthesizing Report...", expanded=False) as status:
-            curr_results["writer"] = writer_chain.invoke({"topic": topic, "research": f"{curr_results['search']}\n{curr_results['reader']}"})
-            st.session_state.results = dict(curr_results)
-            status.update(label="Synthesis Complete", state="complete")
+            try:
+                curr_results["writer"] = writer_chain.invoke({"topic": topic, "research": f"{curr_results['search']}\n{curr_results['reader']}"})
+                st.session_state.results = dict(curr_results)
+                status.update(label="Synthesis Complete", state="complete")
+            except Exception as e:
+                status.update(label="Synthesis Failed", state="error")
+                st.error(f"Writer encountered an error: {str(e)}")
+                st.session_state.running = False
+                st.stop()
+
+        time.sleep(4) # Delay for Free Tier Rate Limits
 
         # 4. Critic
         with st.status("Final Verification...", expanded=False) as status:

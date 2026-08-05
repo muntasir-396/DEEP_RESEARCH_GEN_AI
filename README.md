@@ -7,6 +7,9 @@
 
 An automated, AI-powered deep research assistant built with **Streamlit**, **LangGraph**, and **Mistral AI**. This application takes a complex topic or technical hypothesis and autonomously runs a 4-phase research pipeline to generate a well-structured, verified technical report.
 
+## UI
+<img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/8c89b84b-5f35-4c6e-bed7-ef09eb00eea6" />
+
 ## 🚀 How It Works
 
 The AI Agent orchestrates a pipeline consisting of four distinct phases:

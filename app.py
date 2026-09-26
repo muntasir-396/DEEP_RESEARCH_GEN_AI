@@ -267,3 +267,12 @@ if st.session_state.done:
         st.code(st.session_state.results.get("search", ""), language="text")
 
     st.download_button("EXPORT RESEARCH", st.session_state.results.get("writer", ""), f"deep_research_{int(time.time())}.md")
+
+model_choice = st.selectbox(
+    "SELECT AI MODEL",
+    [
+        "Mistral",
+        "Gemini",
+        "Grok"
+    ]
+)

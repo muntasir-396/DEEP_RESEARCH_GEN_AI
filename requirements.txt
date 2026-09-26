@@ -45,3 +45,14 @@ html5lib>=1.1
 # UI and Model Providers
 streamlit>=1.35.0
 langchain-mistralai>=0.1.0
+langchain-google-genai>=4.0.0
+langchain-xai>=1.0.0
+langgraph>=1.0.0
+
+# Vector DB & Embeddings (RAG)
+chromadb>=1.5.0
+sentence-transformers>=6.0.0
+langchain-chroma>=1.1.0
+langchain-huggingface>=1.2.0
+langchain-text-splitters>=1.1.0
+
